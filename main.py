@@ -52,8 +52,8 @@ def jugar():
 def tablero(n):
     global labels, palabra, victoria, contadorjuego
     labels = [[None for _ in range(n)] for _ in range(6)]
-    print(labels)
     palabra = db_random(n) #acá funcion random dependiendo de la dificultad (n)
+    #print(palabra)
     victoria = False
     contadorjuego = 0
 
@@ -95,7 +95,7 @@ def comprobar_palabra():
 
         if contadorjuego < len(labels) and not victoria:
             texto.delete(0, tk.END)  # Limpiar la entrada para la siguiente palabra
-        else:
+        elif contadorjuego==len(labels) and not victoria:
             reiniciar('perder')
 
 
