@@ -10,7 +10,9 @@ ventana.resizable(False, False)
 diccionario = set() #diccionario global para verificar si la palabra digitada existe.
 
 def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto tamaño
-    palabras = []
+    global diccionario
+    diccionario = set() #reiniciar el diccionario global cuando se pida una palabra nueva
+    palabras = [] #para escoger una palabra aleatoria
     with open('base.txt','r',encoding="UTF-8") as dic:
         for a in dic:
             if len(a.strip()) == lenPalabra:
@@ -67,9 +69,13 @@ def comprobar_palabra():
     global victoria, contadorjuego
     texto_ingresado = texto.get()
     
-    if len(texto_ingresado)!=difficulty or texto_ingresado not in diccionario:
+    if len(texto_ingresado)!=difficulty:
         advertencia.config(text=f"ingresa una palabra válida con {difficulty} letras")
+    elif  texto_ingresado not in diccionario:
+        advertencia.config(text=f"La palabra '{texto_ingresado}' no se encuentra en nuestra base de datos")
+
     else:
+        advertencia.config(text='')
         if palabra == texto_ingresado:
             for j in range(len(labels[contadorjuego])):
                 labels[contadorjuego][j].config(text=texto_ingresado[j], bg='green')

@@ -1,1 +1,0 @@
- pal + f"\n{palabra}"
