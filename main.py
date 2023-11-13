@@ -1,3 +1,4 @@
+from random import choice
 import tkinter as tk
 from tkinter import messagebox
 
@@ -5,6 +6,17 @@ ventana = tk.Tk()
 ventana.title('Wordle')
 ventana.geometry('400x200')
 ventana.resizable(False, False)
+
+diccionario = set() #diccionario global para verificar si la palabra digitada existe.
+
+def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto tamaño
+    palabras = []
+    with open('base.txt','r',encoding="UTF-8") as dic:
+        for a in dic:
+            if len(a.strip()) == lenPalabra:
+                palabras.append(a.strip())
+    #print(palabras) ver banco de palabras de tamaño lenPalabra en la consola
+    return choice(palabras)
 
 def jugar():
     global juego,framearriba,texto,boton_enviar, difficulty,advertencia
@@ -38,7 +50,7 @@ def tablero(n):
     global labels, palabra, victoria, contadorjuego
     labels = [[None for _ in range(n)] for _ in range(6)]
     print(labels)
-    palabra = 'casas' #acá funcion random dependiendo de la dificultad (n)
+    palabra = db_random(n) #acá funcion random dependiendo de la dificultad (n)
     victoria = False
     contadorjuego = 0
 
