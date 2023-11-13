@@ -66,12 +66,8 @@ def tablero(n):
 def comprobar_palabra():
     global victoria, contadorjuego
     texto_ingresado = texto.get()
-
-    if texto_ingresado not in diccionario:
-        pass
-        #MOSTRAR VENTANA QUE HAGA ALGO
     
-    if len(texto_ingresado)!=difficulty : #and texto_ingresado not in set difficulty
+    if len(texto_ingresado)!=difficulty or texto_ingresado not in diccionario:
         advertencia.config(text=f"ingresa una palabra válida con {difficulty} letras")
     else:
         if palabra == texto_ingresado:
