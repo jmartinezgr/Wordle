@@ -15,6 +15,7 @@ def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto
         for a in dic:
             if len(a.strip()) == lenPalabra:
                 palabras.append(a.strip())
+                diccionario.add(a.strip())
     #print(palabras) ver banco de palabras de tamaño lenPalabra en la consola
     return choice(palabras)
 
@@ -65,6 +66,10 @@ def tablero(n):
 def comprobar_palabra():
     global victoria, contadorjuego
     texto_ingresado = texto.get()
+
+    if texto_ingresado not in diccionario:
+        pass
+        #MOSTRAR VENTANA QUE HAGA ALGO
     
     if len(texto_ingresado)!=difficulty : #and texto_ingresado not in set difficulty
         advertencia.config(text=f"ingresa una palabra válida con {difficulty} letras")
