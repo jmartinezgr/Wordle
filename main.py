@@ -8,7 +8,8 @@ ventana.geometry('400x200')
 ventana.resizable(False, False)
 
 diccionario = set() #diccionario global para verificar si la palabra digitada existe.
-
+vic = 0
+der = 0 
 def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto tamaño
     global diccionario
     diccionario = set() #reiniciar el diccionario global cuando se pida una palabra nueva
@@ -22,7 +23,7 @@ def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto
     return choice(palabras)
 
 def jugar():
-    global juego,framearriba,texto,boton_enviar, difficulty,advertencia
+    global juego,framearriba,texto,boton_enviar, difficulty,advertencia, vic,der
     difficulty = int(difficulty_entry.get())
     if difficulty < 4 or difficulty > 8:
         result_label.config(text="Dificultad no válida. Debe ser entre 4 y 8 letras.")
@@ -33,19 +34,38 @@ def jugar():
         juego.geometry('1000x700')
         juego.resizable(False, False)
 
-        framearriba = tk.Frame(juego, relief="solid", borderwidth=1)
-        framearriba.pack()
+        juego.columnconfigure(0,weight=1)
+        for xd in range(6):
+            juego.rowconfigure(xd, weight=1)
 
+        titulo = tk.Frame(juego, relief="solid", borderwidth=1)
+        titulo.grid(row=0,column=0, pady=10)
         
+        titulo.rowconfigure(0,weight=1)
+        titulo.columnconfigure(0,weight=1)
+        titulo.columnconfigure(1,weight=1)
+
+        victorias = tk.Label(titulo, text= f"victorias = {vic}")
+        victorias.grid(row=0,column=0, padx=10)
+
+        derrotas = tk.Label(titulo, text= f"derrotas = {der}")
+        derrotas.grid(row=0,column=1, padx=10)
+
+        framearriba = tk.Frame(juego, relief="solid", borderwidth=1)
+        framearriba.grid(row=1,column=0)
+
+        descripcion = tk.Label(juego, text="Ingrese una palabra") 
+        descripcion.grid(row=2,column=0)
+
         texto = tk.Entry(juego, width=20)
-        texto.pack()
+        texto.grid(row=3)
 
         # Botón para enviar la palabra
         boton_enviar = tk.Button(juego, text="Enviar", command=comprobar_palabra)
-        boton_enviar.pack()
+        boton_enviar.grid(row=4)
 
         advertencia = tk.Label(juego, text="")
-        advertencia.pack()
+        advertencia.grid(row=5)
 
         tablero(difficulty)
 
@@ -66,7 +86,7 @@ def tablero(n):
 
 
 def comprobar_palabra():
-    global victoria, contadorjuego
+    global victoria, contadorjuego,vic, der
     texto_ingresado = texto.get()
     
     if len(texto_ingresado)!=difficulty:
@@ -81,6 +101,7 @@ def comprobar_palabra():
                 labels[contadorjuego][j].config(text=texto_ingresado[j], bg='green')
 
             victoria = True
+            vic += 1 
             reiniciar('ganar')
         else:
             for j in range(len(texto_ingresado)):
@@ -96,6 +117,7 @@ def comprobar_palabra():
         if contadorjuego < len(labels) and not victoria:
             texto.delete(0, tk.END)  # Limpiar la entrada para la siguiente palabra
         elif contadorjuego==len(labels) and not victoria:
+            der += 1
             reiniciar('perder')
 
 
@@ -114,13 +136,13 @@ def reiniciar(causa): #cuando pierdes o ganas muestra la advertencia y se reinic
 def iniciar(): #genera las dificultades
     global difficulty_entry, result_label
     difficulty_label = tk.Label(ventana, text="Seleccione la dificultad (4-8 letras):")
-    difficulty_label.pack()
+    difficulty_label.pack(pady=5)
     difficulty_entry = tk.Entry(ventana)
-    difficulty_entry.pack()
+    difficulty_entry.pack(pady=5)
     start_button = tk.Button(ventana, text="Iniciar partida", command=jugar)
-    start_button.pack()
+    start_button.pack(pady=10)
     result_label = tk.Label(ventana, text="")
-    result_label.pack()
+    result_label.pack(pady=10)
 
 def terminar(): #se usa cuando pierde o gana para reicniar la ventana
     global ventana
