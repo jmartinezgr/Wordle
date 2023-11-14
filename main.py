@@ -88,6 +88,7 @@ def tablero(n):
 def comprobar_palabra():
     global victoria, contadorjuego,vic, der
     texto_ingresado = texto.get()
+    texto_ingresado = texto_ingresado.lower()
     
     if len(texto_ingresado)!=difficulty:
         advertencia.config(text=f"ingresa una palabra válida con {difficulty} letras")
