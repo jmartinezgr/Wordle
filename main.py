@@ -1,6 +1,15 @@
 from random import choice
 import tkinter as tk
 from tkinter import messagebox
+from copy import deepcopy
+
+class Nodo:
+    def __init__(self,value: int = 0) -> None:
+        self.value = value
+        self.previous = None
+
+    def set_previous(self, nodo: 'Nodo') -> None:
+        self.previous = nodo
 
 ventana = tk.Tk()
 ventana.title('Wordle')
@@ -21,6 +30,51 @@ def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto
                 diccionario.add(a.strip())
     #print(palabras) ver banco de palabras de tamaño lenPalabra en la consola
     return choice(palabras)
+
+
+def retornar_colores(dict_palabra: str, intento: str) -> list:
+    info = deepcopy(dict_palabra)
+
+    colores = ['' for _ in intento]
+
+    for i in range(len(intento)):
+        if intento[i] == palabra[i]:
+            colores[i] = 'Verde'        
+            if info[intento[i]][0] > 0:
+                info[intento[i]][0] -= 1
+            else:
+                if info[intento[i]].previus is not None:
+                    indice = info[intento[i]][1].previous.value
+                    info[intento[i]][1] = info[intento[i]][1].previous
+                    colores[indice] = 'Gris'
+        else:
+            if info.get(intento[i]):
+                if info[intento[i]][0] > 0:
+                    info[intento[i]][0] -= 1
+                    nuevo_nodo = Nodo()
+                    nuevo_nodo.set_previous(info[intento[i]][1])
+                    info[intento[i]][1].value = i
+                    info[intento[i]][1] = nuevo_nodo
+                    colores[i] = 'Amarillo'
+                else:   
+                    colores[i] = 'Gris'
+            else:
+                colores[i] = 'Gris'
+    
+    print(colores)
+
+    return colores
+
+def conteo_caracteres(palabra: str) -> dict:
+    info = dict()
+
+    for char in palabra:
+        if info.get(char):
+            info[char][0] += 1
+        else:
+            info[char] = [1, Nodo()]
+
+    return info
 
 def jugar():
     global juego,framearriba,texto,boton_enviar, difficulty,advertencia, vic,der
@@ -69,11 +123,13 @@ def jugar():
 
         tablero(difficulty)
 
+
 def tablero(n):
-    global labels, palabra, victoria, contadorjuego
+    global labels, palabra, victoria, contadorjuego, dic_info
     labels = [[None for _ in range(n)] for _ in range(6)]
     palabra = db_random(n) #acá funcion random dependiendo de la dificultad (n)
-    #print(palabra)
+    dic_info = conteo_caracteres(palabra)
+    print(palabra)
     victoria = False
     contadorjuego = 0
 
@@ -84,12 +140,19 @@ def tablero(n):
 
     texto.delete(0, tk.END)  # Limpiar la entrada al iniciar una nueva partida
 
+    # Centrar la ventana en la pantalla
+    juego.update_idletasks()
+    width = juego.winfo_width()
+    height = juego.winfo_height()
+    x = (juego.winfo_screenwidth() // 2) - (width // 2)
+    y = (juego.winfo_screenheight() // 2) - (height // 2)
+    juego.geometry('{}x{}+{}+{}'.format(width, height, x, y-19))
+    
 
 def comprobar_palabra():
     global victoria, contadorjuego,vic, der
     texto_ingresado = texto.get()
     texto_ingresado = texto_ingresado.lower()
-    
     if len(texto_ingresado)!=difficulty:
         advertencia.config(text=f"ingresa una palabra válida con {difficulty} letras")
     elif  texto_ingresado not in diccionario:
@@ -105,10 +168,11 @@ def comprobar_palabra():
             vic += 1 
             reiniciar('ganar')
         else:
+            colores = retornar_colores(dic_info,texto_ingresado)
             for j in range(len(texto_ingresado)):
-                if texto_ingresado[j] == palabra[j]:
+                if colores[j] == 'Verde':
                     labels[contadorjuego][j].config(text=texto_ingresado[j], bg='green')
-                elif texto_ingresado[j] in palabra:
+                elif colores[j] == 'Amarillo':
                     labels[contadorjuego][j].config(text=texto_ingresado[j], bg='yellow')
                 else:
                     labels[contadorjuego][j].config(text=texto_ingresado[j], bg='gray')
@@ -144,6 +208,14 @@ def iniciar(): #genera las dificultades
     start_button.pack(pady=10)
     result_label = tk.Label(ventana, text="")
     result_label.pack(pady=10)
+
+    # Centrar la ventana en la pantalla
+    ventana.update_idletasks()
+    width = ventana.winfo_width()
+    height = ventana.winfo_height()
+    x = (ventana.winfo_screenwidth() // 2) - (width // 2)
+    y = (ventana.winfo_screenheight() // 2) - (height // 2)
+    ventana.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 def terminar(): #se usa cuando pierde o gana para reicniar la ventana
     global ventana
