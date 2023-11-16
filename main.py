@@ -34,7 +34,6 @@ def db_random(lenPalabra): #funcion para escoger una palabra aleatoria de cierto
 
 def retornar_colores(dict_palabra: str, intento: str) -> list:
     info = deepcopy(dict_palabra)
-
     colores = ['' for _ in intento]
 
     for i in range(len(intento)):
@@ -60,9 +59,6 @@ def retornar_colores(dict_palabra: str, intento: str) -> list:
                     colores[i] = 'Gris'
             else:
                 colores[i] = 'Gris'
-    
-    print(colores)
-
     return colores
 
 def conteo_caracteres(palabra: str) -> dict:
@@ -188,15 +184,21 @@ def comprobar_palabra():
 
 def reiniciar(causa): #cuando pierdes o ganas muestra la advertencia y se reinicia el juego
     if causa=='ganar':
-        respuesta = messagebox.showinfo("GANASTE", "GANASTE, ¿Quieres iniciar el juego?")
-        if respuesta == 'ok':
-            juego.destroy()
-            terminar() #esta funcion crea ventana para preguntar la dificultad
+        respuesta = messagebox.askokcancel("GANASTE", "GANASTE, ¿Quieres volver a jugar?")
+        if respuesta:
+            juego.destroy() #esta funcion crea ventana para preguntar la dificultad
+            terminar() 
+        else:
+            messagebox.showinfo('GRACIAS','Gracias por haber jugado')
+            juego.destroy() 
     else:
-        respuesta = messagebox.showinfo("PERDISTE", "PERDISTE, ¿Quieres iniciar el juego?")
-        if respuesta == 'ok':
+        respuesta = messagebox.showinfo("PERDISTE", "PERDISTE, ¿Quieres volver a intentarlo?")
+        if respuesta:
             juego.destroy()
             terminar()
+        else:
+            messagebox.showinfo('GRACIAS','Gracias por haber jugado')
+            juego.destroy() 
             
 def iniciar(): #genera las dificultades
     global difficulty_entry, result_label
@@ -224,7 +226,6 @@ def terminar(): #se usa cuando pierde o gana para reicniar la ventana
     ventana.geometry('400x200')
     ventana.resizable(False, False)
     iniciar()
-
 
 
 ventana.after(0, lambda: iniciar())
